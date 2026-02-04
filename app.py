@@ -3,7 +3,35 @@
 # Professional Portfolio Optimization & Global Multi-Asset Edition
 # Enhanced Institutional Features & Comprehensive Error Handling
 # =============================================================
+# Add this at the top of your app.py
+import sys
+import subprocess
+import pkg_resources
 
+def install_package(package):
+    """Install package if not available"""
+    try:
+        pkg_resources.get_distribution(package.split('==')[0].split('>')[0].split('<')[0])
+        print(f"{package} already installed")
+    except pkg_resources.DistributionNotFound:
+        print(f"Installing {package}...")
+        subprocess.check_call([sys.executable, "-m", "pip", "install", package])
+
+# Try to install pypfopt if not available
+try:
+    import pypfopt
+    PYPFOPT_AVAILABLE = True
+    PYPFOPT_VERSION = pypfopt.__version__
+except ImportError:
+    try:
+        install_package("pypfopt>=1.5.0")
+        import pypfopt
+        PYPFOPT_AVAILABLE = True
+        PYPFOPT_VERSION = pypfopt.__version__
+    except:
+        PYPFOPT_AVAILABLE = False
+        PYPFOPT_VERSION = "Not Available"
+        print("Warning: PyPortfolioOpt not available. Using fallback optimization methods.")
 import os
 import warnings
 import numpy as np
